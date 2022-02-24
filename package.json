@@ -1,5 +1,5 @@
 {
-	"name": "stremio-addon-",
+	"name": "stremio-assrt-subtitles",
 	"version": "0.0.1",
 	"description": "字幕服务由assrt.net提供。",
 	"scripts": {
