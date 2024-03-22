@@ -6,7 +6,10 @@
 		"start": "node server.js"
 	},
 	"dependencies": {
-		"imdb-light": "^1.1.5",
+		"axios": "^1.6.8",
 		"stremio-addon-sdk": "1.1.x"
+	},
+	"devDependencies": {
+		"eslint": "^8.57.0"
 	}
 }

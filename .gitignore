@@ -1,1 +1,9 @@
 node_modules
+/.vs
+/.eslintrc.json
+/bin
+/obj/Debug
+/stremio-assrt-subtitles.njsproj
+/stremio-assrt-subtitles.njsproj.user
+/stremio-assrt-subtitles.sln
+/stremio.assrt.njsproj.user

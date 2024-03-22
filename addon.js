@@ -1,5 +1,5 @@
 const {
-	addonBuilder
+	addonBuilder, serveHTTP, publishToCentral
 } = require("stremio-addon-sdk")
 const {
 	getSub
@@ -7,7 +7,7 @@ const {
 
 // Docs: https://github.com/Stremio/stremio-addon-sdk/blob/master/docs/api/responses/manifest.md
 const manifest = {
-	"id": "community.",
+	"id": "jackalope.assrt",
 	"version": "1.0.0",
 	"catalogs": [],
 	"resources": [
@@ -25,18 +25,15 @@ const builder = new addonBuilder(manifest)
 builder.defineSubtitlesHandler(async ({
 	type,
 	id,
-	filename
+	extra
 }) => {
 	await console.log("request for subtitles: " + type + " " + id)
-	if (filename != undefined) {
-		await console.log("filename: " + filename)
-	}
 	try {
-		var subtitle = await getSub(type, id, filename)
-		if (subtitle != undefined) {
-			console.log(subtitle)
+		var subtitles = await getSub(type, id, extra)
+		if (subtitles != undefined) {
+			console.log(subtitles)
 			return Promise.resolve({
-				subtitles: subtitle
+				subtitles: subtitles
 			})
 		} else {
 			console.log("未找到字幕。")
