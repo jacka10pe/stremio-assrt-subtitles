@@ -72,7 +72,7 @@ async function searchUrl(type, id, extra) {
 	var subtitles = []
 	var fid = await searchId(type, id, extra)
     if (fid != undefined) {
-        const response = await fetch(`https://api.assrt.net/v1/sub/detail?token=${TOKEN}&id=${fid}`)
+		const response = await fetch(`https://api.assrt.net/v1/sub/detail?token=${ASSRT_TOKEN}&id=${fid}`)
 		const data = await response.json()
 		for (var i in data.sub.subs[0].filelist) {
 			var f = data.sub.subs[0].filelist[i].f;
