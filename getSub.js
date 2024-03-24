@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 const ASSRT_TOKEN = process.env.ASSRT_TOKEN
 const TMDB_TOKEN = process.env.TMDB_TOKEN
 const axios = require('axios');
