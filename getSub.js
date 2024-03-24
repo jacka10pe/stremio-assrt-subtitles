@@ -50,50 +50,53 @@ async function searchId(type, id, extra) {
         }
         filename = filename + " S" + sp[1] + "E" + sp[2]
     }
-    console.log("filename: " + filename)
-    const response = await fetch(`https://api.assrt.net/v1/sub/search?token=${ASSRT_TOKEN}&q=${filename}&cnt=15&pos=0&no_muxer=1&filelist=1`)
-    const data = await response.json()
+	console.log("filename: " + filename)
+    const response = await axios.get(`https://api.assrt.net/v1/sub/search?token=${ASSRT_TOKEN}&q=${filename}&cnt=5&pos=0&no_muxer=1&filelist=1`)
+	const data = response.data
+	var ids = []
     if (data.sub.subs) {
-        for (i in data.sub.subs) {
-			for (var j in data.sub.subs[i].filelist) {
-				if (isChineseSubtitle(data.sub.subs[i].filelist[j].f)) {
-					var fid = data.sub.subs[i].id
-					if (fid != undefined) {
-						return fid
-					}
-				}
+		for (var sub of data.sub.subs) {
+			if (sub.id == undefined || !sub.filelist.find(file => isFileCompatible(file.f) != undefined)) {
+				continue;
 			}
-        }
+			var langlist = sub.lang.langlist
+			if (langlist.langcht
+				|| langlist.langchs
+				|| langlist.langdou
+				|| sub.filelist.find(file => isChineseSubtitle(file) != undefined)) {
+				ids.push(sub.id)
+				continue;
+			}
+		}
     }
-    return undefined
+	return ids;
 }
 
 async function searchUrl(type, id, extra) {
 	var subtitles = []
-	var fid = await searchId(type, id, extra)
-    if (fid != undefined) {
-		const response = await fetch(`https://api.assrt.net/v1/sub/detail?token=${ASSRT_TOKEN}&id=${fid}`)
-		const data = await response.json()
-		for (var i in data.sub.subs[0].filelist) {
-			var f = data.sub.subs[0].filelist[i].f;
-			if (isChineseSubtitle(f)) {
-				var subtitle = {
-					id: "assrt" + i,
-					url: data.sub.subs[0].filelist[i].url,
-					lang: "Assrt-Chinese"
-				}
-				subtitles.push(subtitle)
-            }
-        }
-		return subtitles
-    } else {
-        return undefined
-    }
+	var subids = await searchId(type, id, extra)
+	for (var subid of subids) {
+		const response = await axios.get(`https://api.assrt.net/v1/sub/detail?token=${ASSRT_TOKEN}&id=${subid}`)
+		const sub = response.data.sub.subs[0]
+		for (var file of sub.filelist) {
+			var f = file.f;
+			if(!isFileCompatible(f)) {
+				continue;
+			}
+			var subtitle = {
+				id: `${subid} ${f}`,
+				url: file.url,
+				lang: sub.lang.desc ?? "Assrt-Chinese"
+			}
+			subtitles.push(subtitle)
+		}
+	}
+
+	return subtitles
 }
 
 function isChineseSubtitle(str) {
-	return str.search(".srt") != -1
-		&& (str.search("简") != -1
+	return str.search("简") != -1
 			|| str.search("繁") != -1
 			|| str.search("sc") != -1
 			|| str.search("SC") != -1
@@ -101,7 +104,11 @@ function isChineseSubtitle(str) {
 			|| str.search("chs") != -1
 			|| str.search("cht") != -1
 			|| str.search("zhe") != -1
-			|| str.search("zho") != -1);
+			|| str.search("zho") != -1;
+}
+
+function isFileCompatible(str) {
+	return str.search(".srt") != -1;
 }
 
 async function getSub(type, id, extra) {
@@ -120,7 +127,7 @@ async function getSub(type, id, extra) {
 //	extra: undefined
 //}
 
-// getSub(info.type, info.id, info.extra)
+//getSub(info.type, info.id, info.extra)
 
 module.exports = {
     getSub
