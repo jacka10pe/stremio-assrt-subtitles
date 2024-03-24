@@ -56,16 +56,17 @@ async function searchId(type, id, extra) {
 	var ids = []
     if (data.sub.subs) {
 		for (var sub of data.sub.subs) {
-			if (sub.id == undefined || !sub.filelist.find(file => isFileCompatible(file.f) != undefined)) {
+			var filelist = getFileList(sub)
+			if (sub.id == undefined
+				|| filelist.length == 0) {
 				continue;
 			}
 			var langlist = sub.lang.langlist
 			if (langlist.langcht
 				|| langlist.langchs
 				|| langlist.langdou
-				|| sub.filelist.find(file => isChineseSubtitle(file) != undefined)) {
+				|| filelist.find(file => isChineseSubtitle(file) != undefined)) {
 				ids.push(sub.id)
-				continue;
 			}
 		}
     }
@@ -78,13 +79,10 @@ async function searchUrl(type, id, extra) {
 	for (var subid of subids) {
 		const response = await axios.get(`https://api.assrt.net/v1/sub/detail?token=${ASSRT_TOKEN}&id=${subid}`)
 		const sub = response.data.sub.subs[0]
-		for (var file of sub.filelist) {
-			var f = file.f;
-			if(!isFileCompatible(f)) {
-				continue;
-			}
+		var filelist = getFileList(sub)
+		for (var file of filelist) {
 			var subtitle = {
-				id: `${subid} ${f}`,
+				id: `${subid} ${file.f}`,
 				url: file.url,
 				lang: sub.lang.desc ?? "Assrt-Chinese"
 			}
@@ -111,6 +109,27 @@ function isFileCompatible(str) {
 	return str.search(".srt") != -1;
 }
 
+function getFileList(sub) {
+var filelist = sub.filelist
+	var files = []
+	if (Array.isArray(filelist)) {
+		for (var file of filelist) {
+			if (!isFileCompatible(file.f)) {
+				continue;
+			}
+			files.push(file)
+		}
+	}
+	if (isFileCompatible(sub.filename)) {
+		files.push({
+			f: sub.filename,
+			url: sub.url
+		})
+	}
+	return files
+
+}
+
 async function getSub(type, id, extra) {
 	var subtitles = await searchUrl(type, id, extra)
     return subtitles
@@ -123,7 +142,7 @@ async function getSub(type, id, extra) {
 //}
 //var info = {
 //	type: "movie",
-//	id: "tt7097896",
+//	id: "tt0405422",
 //	extra: undefined
 //}
 
