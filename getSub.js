@@ -22,7 +22,7 @@ async function fetchTitle(id, mediaType) {
 		const response = await axios.request(options);
 		switch (mediaType) {
 			case "movie":
-				title = response.data.movie_results[0].original_title;
+				title = response.data.movie_results[0].original_title + " " + response.data.movie_results[0].release_date.substring(0, 4);
 				break;
 			case "series":
 				title = response.data.tv_results[0].original_name;
@@ -140,7 +140,7 @@ async function getSub(type, id, extra) {
 //}
 //var info = {
 //	type: "movie",
-//	id: "tt0405422",
+//	id: "tt0059673",
 //	extra: undefined
 //}
 
