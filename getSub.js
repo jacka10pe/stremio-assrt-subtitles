@@ -52,7 +52,7 @@ async function searchId(type, id, extra) {
     const response = await axios.get(`https://api.assrt.net/v1/sub/search?token=${ASSRT_TOKEN}&q=${filename}&cnt=5&pos=0&no_muxer=1&filelist=1`)
 	const data = response.data
 	var ids = []
-    if (data.sub.subs) {
+    if (Array.isArray(data.sub.subs)) {
 		for (var sub of data.sub.subs) {
 			var filelist = getFileList(sub)
 			if (sub.id == undefined
@@ -133,18 +133,18 @@ async function getSub(type, id, extra) {
     return subtitles
 }
 
-//var info = {
-//	 type: "series",
-//	 id: "tt2788316:1:3",
-//     extra: undefined
-//}
+var info = {
+	 type: "series",
+	 id: "tt2788316:1:3",
+     extra: undefined
+}
 //var info = {
 //	type: "movie",
 //	id: "tt0059673",
 //	extra: undefined
 //}
 
-//getSub(info.type, info.id, info.extra)
+getSub(info.type, info.id, info.extra)
 
 module.exports = {
     getSub
