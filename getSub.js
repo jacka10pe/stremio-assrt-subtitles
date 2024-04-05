@@ -59,13 +59,14 @@ async function searchId(type, id, extra) {
 				|| filelist.length == 0) {
 				continue;
 			}
-			var langlist = sub.lang.langlist
-			if (langlist.langcht
-				|| langlist.langchs
-				|| langlist.langdou
-				|| filelist.find(file => isChineseSubtitle(file) != undefined)) {
-				ids.push(sub.id)
-			}
+			//var langlist = sub.lang.langlist
+			//if (langlist.langcht
+			//	|| langlist.langchs
+			//	|| langlist.langdou
+			//	|| filelist.find(file => isChineseSubtitle(file) != undefined)) {
+			//	ids.push(sub.id)
+			//}
+			ids.push(sub.id)
 		}
     }
 	return ids;
@@ -82,7 +83,7 @@ async function searchUrl(type, id, extra) {
 			var subtitle = {
 				id: `${subid} ${file.f}`,
 				url: file.url,
-				lang: sub.lang.desc ?? "Assrt-Chinese"
+				lang: sub.lang.desc ?? "Assrt"
 			}
 			subtitles.push(subtitle)
 		}
@@ -133,18 +134,18 @@ async function getSub(type, id, extra) {
     return subtitles
 }
 
-var info = {
-	 type: "series",
-	 id: "tt2788316:1:3",
-     extra: undefined
-}
+//var info = {
+//	 type: "series",
+//	 id: "tt2788316:1:3",
+//     extra: undefined
+//}
 //var info = {
 //	type: "movie",
 //	id: "tt0059673",
 //	extra: undefined
 //}
 
-getSub(info.type, info.id, info.extra)
+//getSub(info.type, info.id, info.extra)
 
 module.exports = {
     getSub
